@@ -18,6 +18,7 @@ BACKGROUND_COLOR = general.BACKGROUND_COLOR
 score = 0
 direction = 'down'
 
+
 def personalize_game():
     window = Toplevel()
 
@@ -26,31 +27,51 @@ def personalize_game():
 
     window.geometry("600x400")
 
-    x = 1
-    y = 2
-    z = 3
-    q = 4
-    k = 5
+    x = IntVar()
+    y = IntVar()
+    z = IntVar()
+    q = IntVar()
 
-    backgroundColorLabel = Label(window, text="Background color", font=('consolas', 30)).grid(row=0, column=0, columnspan=3)
-    color1 = Radiobutton(window, text="black", variable=x, font=('consolas', 10), value=1, indicatoron=False).grid(row=1,column=0)
-    color2 = Radiobutton(window, text="red", variable=x, font=('consolas', 10), value=2, indicatoron=False).grid(row=1,column=1)
-    color3 = Radiobutton(window, text="blue", variable=x, font=('consolas', 10), value=3, indicatoron=False).grid(row=1, column=3)
+    Label(window, text="Background color", font=('consolas', 30)).grid(row=0, column=0, columnspan=4)
+    Radiobutton(window, text="black", variable=x, font=('consolas', 10), value=1, indicatoron=False,
+                command=lambda: set_background(x)).grid(row=1, column=0)
+    Radiobutton(window, text="red", variable=x, font=('consolas', 10), value=2, indicatoron=False,
+                command=lambda: set_background(x)).grid(row=1, column=1)
+    Radiobutton(window, text="blue", variable=x, font=('consolas', 10), value=3, indicatoron=False,
+                command=lambda: set_background(x)).grid(row=1, column=3)
+    Radiobutton(window, text="pink", variable=x, font=('consolas', 10), value=13, indicatoron=False,
+                command=lambda: set_background(x)).grid(row=1, column=4)
 
-    snakeColorLabel = Label(window, text="Snake color", font=('consolas', 30)).grid(row=2, column=0, columnspan=3)
-    color4 = Radiobutton(window, text="black", variable=y, indicatoron=False, value=4, font=('consolas', 10)).grid(row=3, column=0)
-    color5 = Radiobutton(window, text="red" ,variable=y, indicatoron=False, value=5, font=('consolas', 10)).grid(row=3, column=1)
-    color6 = Radiobutton(window, text="blue", variable=y, indicatoron=False, value=6, font=('consolas', 10)).grid(row=3, column=3)
+    Label(window, text="Snake color", font=('consolas', 30)).grid(row=2, column=0, columnspan=4)
+    Radiobutton(window, text="black", variable=y, indicatoron=False, value=4, font=('consolas', 10),
+                command=lambda: set_snake_color(y)).grid(row=3,
+                                                         column=0)
+    Radiobutton(window, text="red", variable=y, indicatoron=False, value=5, font=('consolas', 10),
+                command=lambda: set_snake_color(y)).grid(row=3, column=1)
+    Radiobutton(window, text="blue", variable=y, indicatoron=False, value=6, font=('consolas', 10),
+                command=lambda: set_snake_color(y)).grid(row=3, column=3)
+    Radiobutton(window, text="pink", variable=y, indicatoron=False, value=14, font=('consolas', 10),
+                command=lambda: set_snake_color(y)).grid(row=3, column=4)
 
-    foodColorLabel = Label(window, text="Food color", font=('consolas', 30)).grid(row=4, column=0, columnspan=3)
-    color7 = Radiobutton(window, text="black", variable=z, indicatoron=False, value=7, font=('consolas', 10)).grid(row=5, column=0)
-    color8 = Radiobutton(window, text="red",variable=z, indicatoron=False, value=8, font=('consolas', 10)).grid(row=5, column=1)
-    color9 = Radiobutton(window, text="blue",variable=z, indicatoron=False, value=9, font=('consolas', 10)).grid(row=5, column=3)
+    Label(window, text="Food color", font=('consolas', 30)).grid(row=4, column=0, columnspan=4)
+    Radiobutton(window, text="black", variable=z, indicatoron=False, value=7, font=('consolas', 10),
+                command=lambda: set_food_color(z)).grid(row=5, column=0)
+    Radiobutton(window, text="red", variable=z, indicatoron=False, value=8, font=('consolas', 10),
+                command=lambda: set_food_color(z)).grid(row=5, column=1)
+    Radiobutton(window, text="blue", variable=z, indicatoron=False, value=9, font=('consolas', 10),
+                command=lambda: set_food_color(z)).grid(row=5,column=3)
+    Radiobutton(window, text="pink", variable=z, indicatoron=False, value=15, font=('consolas', 10),
+                command=lambda: set_food_color(z)).grid(row=5, column=4)
 
-    speedLabel = Label(window, text="Speed", font=('consolas', 30)).grid(row=6, column=0, columnspan=3)
-    speed1 = Radiobutton(window, text="50", variable=q, indicatoron=False, value=10, font=('consolas', 10)).grid(row=7, column=0)
-    speed2 = Radiobutton(window, text="100", variable=q, indicatoron=False, value=11, font=('consolas', 10)).grid(row=7,column=1)
-    speed3 = Radiobutton(window, text="150", variable=q, indicatoron=False, value=12, font=('consolas', 10)).grid(row=7,column=3)
+    Label(window, text="Speed", font=('consolas', 30)).grid(row=6, column=0, columnspan=4)
+    Radiobutton(window, text="slow", variable=q, indicatoron=False, value=10, font=('consolas', 10),
+                command=lambda: set_speed(q)).grid(row=7, column=0)
+    Radiobutton(window, text="medium", variable=q, indicatoron=False, value=11, font=('consolas', 10),
+                command=lambda: set_speed(q)).grid(row=7,column=1)
+    Radiobutton(window, text="fast", variable=q, indicatoron=False, value=12, font=('consolas', 10),
+                command=lambda: set_speed(q)).grid(row=7, column=3)
+    Radiobutton(window, text="super fast", variable=q, indicatoron=False, value=16, font=('consolas', 10),
+                command=lambda: set_speed(q)).grid(row=7, column=4)
 
     button = Button(window, text="Start game", command=create_game)
     button.place(relx=0.3, rely=0.9, anchor="n")
@@ -58,8 +79,69 @@ def personalize_game():
     window.mainloop()
 
 
-def create_game():
+def set_background(x):
+    global BACKGROUND_COLOR
+    if x.get() == 1:
+        general.BACKGROUND_COLOR = "#000000"
+        BACKGROUND_COLOR = general.BACKGROUND_COLOR
+    elif x.get() == 2:
+        general.BACKGROUND_COLOR = "red"
+        BACKGROUND_COLOR = general.BACKGROUND_COLOR
+    elif x.get() == 3:
+        general.BACKGROUND_COLOR = "blue"
+        BACKGROUND_COLOR = general.BACKGROUND_COLOR
+    elif x.get() == 13:
+        general.BACKGROUND_COLOR = "pink"
+        BACKGROUND_COLOR = general.BACKGROUND_COLOR
 
+
+def set_snake_color(y):
+    global SNAKE_COLOR
+    if y.get() == 4:
+        general.SNAKE_COLOR = "#000000"
+        SNAKE_COLOR = general.SNAKE_COLOR
+    elif y.get() == 5:
+        general.SNAKE_COLOR = "red"
+        SNAKE_COLOR = general.SNAKE_COLOR
+    elif y.get() == 6:
+        general.SNAKE_COLOR = "blue"
+        SNAKE_COLOR = general.SNAKE_COLOR
+    elif y.get() == 14:
+        general.SNAKE_COLOR = "pink"
+        SNAKE_COLOR = general.SNAKE_COLOR
+
+def set_food_color(z):
+    global FOOD_COLOR
+    if z.get()==7:
+        general.FOOD_COLOR = "#000000"
+        FOOD_COLOR = general.FOOD_COLOR
+    elif z.get()==8:
+        general.FOOD_COLOR = "red"
+        FOOD_COLOR = general.FOOD_COLOR
+    elif z.get()==9:
+        general.FOOD_COLOR = "blue"
+        FOOD_COLOR = general.FOOD_COLOR
+    elif z.get()==15:
+        general.FOOD_COLOR = "pink"
+        FOOD_COLOR = general.FOOD_COLOR
+
+def set_speed(q):
+    global SPEED
+    if q.get()==10:
+        general.SPEED = 150
+        SPEED = general.SPEED
+    elif q.get()==11:
+        general.SPEED = 100
+        SPEED = general.SPEED
+    elif q.get()==12:
+        general.SPEED = 50
+        SPEED = general.SPEED
+    elif q.get()==16:
+        general.SPEED = 35
+        SPEED = general.SPEED
+
+
+def create_game():
     root.destroy()
 
     window = Tk()
@@ -158,9 +240,7 @@ def next_turn(snake, food, canvas, label, window):
 
 
 def change_direction(new_direction):
-
     global direction  #the old direction
-
 
     if new_direction == 'left':
         if direction != 'right':
@@ -202,7 +282,6 @@ def game_over(canvas):
 root = Tk()
 root.title("Snake game")
 background_image = PhotoImage(file="snake.png")
-
 
 # Here, I try to place the game window as much in the center of the screen as possible
 window_width = background_image.width()
