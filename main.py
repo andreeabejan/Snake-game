@@ -181,8 +181,8 @@ def set_speed(q):
     elif q.get() ==19:
         fereastra = Toplevel()
 
-        window_width = 250
-        window_height = 450
+        window_width = 120
+        window_height = 440
         screen_width = fereastra.winfo_screenwidth()
         screen_height = fereastra.winfo_screenheight()
 
