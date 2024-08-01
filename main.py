@@ -1,5 +1,6 @@
 from tkinter import *
 import random
+from tkinter import colorchooser
 from Snake import *
 from Food import *
 from General_settings import *
@@ -17,10 +18,15 @@ BACKGROUND_COLOR = general.BACKGROUND_COLOR
 
 score = 0
 direction = 'down'
+wasSettingsClicked = 0
 
 
 def personalize_game():
-    window = Toplevel()
+    global wasSettingsClicked
+    wasSettingsClicked = 1
+    root.destroy()
+
+    window = Tk()
 
     window.title("Snake game settings")
     window.resizable(False, False)
@@ -32,7 +38,9 @@ def personalize_game():
     z = IntVar()
     q = IntVar()
 
-    Label(window, text="Background color", font=('consolas', 30)).grid(row=0, column=0, columnspan=4)
+    #options for Background color -----------------------------------------------------------------------
+
+    Label(window, text="Background color", font=('consolas', 30)).grid(row=0, column=0, columnspan=5)
     Radiobutton(window, text="black", variable=x, font=('consolas', 10), value=1, indicatoron=False,
                 command=lambda: set_background(x)).grid(row=1, column=0)
     Radiobutton(window, text="red", variable=x, font=('consolas', 10), value=2, indicatoron=False,
@@ -41,8 +49,12 @@ def personalize_game():
                 command=lambda: set_background(x)).grid(row=1, column=3)
     Radiobutton(window, text="pink", variable=x, font=('consolas', 10), value=13, indicatoron=False,
                 command=lambda: set_background(x)).grid(row=1, column=4)
+    Radiobutton(window, text="custom", variable=x, font=('consolas',10), value=16, indicatoron=False,
+                command=lambda: set_background(x)).grid(row=1, column=5)
 
-    Label(window, text="Snake color", font=('consolas', 30)).grid(row=2, column=0, columnspan=4)
+    #options for Snake color -------------------------------------------------------------------------
+
+    Label(window, text="Snake color", font=('consolas', 30)).grid(row=2, column=0, columnspan=5)
     Radiobutton(window, text="black", variable=y, indicatoron=False, value=4, font=('consolas', 10),
                 command=lambda: set_snake_color(y)).grid(row=3,
                                                          column=0)
@@ -52,8 +64,12 @@ def personalize_game():
                 command=lambda: set_snake_color(y)).grid(row=3, column=3)
     Radiobutton(window, text="pink", variable=y, indicatoron=False, value=14, font=('consolas', 10),
                 command=lambda: set_snake_color(y)).grid(row=3, column=4)
+    Radiobutton(window, text="custom", variable=y, indicatoron=False, value=17, font=('consolas', 10),
+                command=lambda: set_snake_color(y)).grid(row=3, column=5)
 
-    Label(window, text="Food color", font=('consolas', 30)).grid(row=4, column=0, columnspan=4)
+    #options for Food color -------------------------------------------------------------------------
+
+    Label(window, text="Food color", font=('consolas', 30)).grid(row=4, column=0, columnspan=5)
     Radiobutton(window, text="black", variable=z, indicatoron=False, value=7, font=('consolas', 10),
                 command=lambda: set_food_color(z)).grid(row=5, column=0)
     Radiobutton(window, text="red", variable=z, indicatoron=False, value=8, font=('consolas', 10),
@@ -62,6 +78,10 @@ def personalize_game():
                 command=lambda: set_food_color(z)).grid(row=5,column=3)
     Radiobutton(window, text="pink", variable=z, indicatoron=False, value=15, font=('consolas', 10),
                 command=lambda: set_food_color(z)).grid(row=5, column=4)
+    Radiobutton(window, text="custom", variable=z, indicatoron=False, value=18, font=('consolas',10),
+                command=lambda: set_food_color(z)).grid(row=5, column=5)
+
+    #options for Speed -------------------------------------------------------------------------------
 
     Label(window, text="Speed", font=('consolas', 30)).grid(row=6, column=0, columnspan=4)
     Radiobutton(window, text="slow", variable=q, indicatoron=False, value=10, font=('consolas', 10),
@@ -93,6 +113,10 @@ def set_background(x):
     elif x.get() == 13:
         general.BACKGROUND_COLOR = "pink"
         BACKGROUND_COLOR = general.BACKGROUND_COLOR
+    elif x.get() == 16:
+        color = colorchooser.askcolor()
+        general.BACKGROUND_COLOR = color[1] #color in hexadecimal value
+        BACKGROUND_COLOR = general.BACKGROUND_COLOR
 
 
 def set_snake_color(y):
@@ -109,6 +133,11 @@ def set_snake_color(y):
     elif y.get() == 14:
         general.SNAKE_COLOR = "pink"
         SNAKE_COLOR = general.SNAKE_COLOR
+    elif y.get() == 17:
+        color = colorchooser.askcolor()
+        general.SNAKE_COLOR = color[1] #Hex value of the color
+        SNAKE_COLOR = general.SNAKE_COLOR
+
 
 def set_food_color(z):
     global FOOD_COLOR
@@ -123,6 +152,10 @@ def set_food_color(z):
         FOOD_COLOR = general.FOOD_COLOR
     elif z.get()==15:
         general.FOOD_COLOR = "pink"
+        FOOD_COLOR = general.FOOD_COLOR
+    elif z.get()==18:
+        color = colorchooser.askcolor()
+        general.FOOD_COLOR = color[1] #Hex value of returned color
         FOOD_COLOR = general.FOOD_COLOR
 
 def set_speed(q):
@@ -142,7 +175,11 @@ def set_speed(q):
 
 
 def create_game():
-    root.destroy()
+    global wasSettingsClicked
+    if wasSettingsClicked == 0:
+        root.destroy()
+    else:
+        pass
 
     window = Tk()
 
