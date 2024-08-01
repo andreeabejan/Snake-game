@@ -83,7 +83,7 @@ def personalize_game():
 
     #options for Speed -------------------------------------------------------------------------------
 
-    Label(window, text="Speed", font=('consolas', 30)).grid(row=6, column=0, columnspan=4)
+    Label(window, text="Speed", font=('consolas', 30)).grid(row=6, column=0, columnspan=5)
     Radiobutton(window, text="slow", variable=q, indicatoron=False, value=10, font=('consolas', 10),
                 command=lambda: set_speed(q)).grid(row=7, column=0)
     Radiobutton(window, text="medium", variable=q, indicatoron=False, value=11, font=('consolas', 10),
@@ -92,11 +92,17 @@ def personalize_game():
                 command=lambda: set_speed(q)).grid(row=7, column=3)
     Radiobutton(window, text="super fast", variable=q, indicatoron=False, value=16, font=('consolas', 10),
                 command=lambda: set_speed(q)).grid(row=7, column=4)
+    Radiobutton(window, text="custom", variable=q, indicatoron=False, value=19, font=('consolas',10),
+                command=lambda: set_speed(q)).grid(row=7, column=5)
 
-    button = Button(window, text="Start game", command=create_game)
+    button = Button(window, text="Start game", command=lambda: done_with_settings(window))
     button.place(relx=0.3, rely=0.9, anchor="n")
 
     window.mainloop()
+
+def done_with_settings(window):
+    window.destroy()
+    create_game()
 
 
 def set_background(x):
@@ -172,7 +178,46 @@ def set_speed(q):
     elif q.get()==16:
         general.SPEED = 35
         SPEED = general.SPEED
+    elif q.get() ==19:
+        fereastra = Toplevel()
 
+        window_width = 250
+        window_height = 450
+        screen_width = fereastra.winfo_screenwidth()
+        screen_height = fereastra.winfo_screenheight()
+
+        #move window a little to the right
+        x = int((screen_width / 2) - (window_width / 2)) + 100  #+100 to move further right
+        y = int((screen_height / 2) - (window_height / 2))
+
+        fereastra.geometry(f"{window_width}x{window_height}+{x}+{y}")
+
+        fastImage = PhotoImage(file="fast.png")
+        fastLabel = Label(fereastra, image=fastImage)
+        fastLabel.pack()
+
+        scale = Scale(fereastra,
+                      from_=30,
+                      to=150,
+                      length=200,
+                      troughcolor='black')
+        scale.set(50)
+        scale.pack()
+
+        slowImage = PhotoImage(file="slow.png")
+        slowLabel = Label(fereastra,image=slowImage)
+        slowLabel.pack()
+
+        button = Button(fereastra, text='submit',command=lambda: setSpeed(scale,fereastra))
+        button.pack()
+
+        fereastra.mainloop()
+
+def setSpeed(scale,fereastra):
+    global SPEED
+    general.SPEED = scale.get()
+    SPEED = general.SPEED
+    fereastra.destroy()
 
 def create_game():
     global wasSettingsClicked
