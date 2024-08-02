@@ -12,7 +12,7 @@ class Generals:
     def __init__(self):
         self.GAME_WIDTH = 900
         self.GAME_HEIGHT = 400
-        self.SPEED = 50
+        self.SPEED = 70
         self.SPACE_SIZE = 20
         self.BODY_PARTS = 3
         self.SNAKE_COLOR = "pink"

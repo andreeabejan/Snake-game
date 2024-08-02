@@ -3,6 +3,7 @@ import random
 from tkinter import colorchooser
 from Snake import *
 from Food import *
+from SpecialFood import *
 from General_settings import *
 
 #Initialize the game settings by using an object
@@ -19,6 +20,7 @@ BACKGROUND_COLOR = general.BACKGROUND_COLOR
 score = 0
 direction = 'down'
 wasSettingsClicked = 0
+rareSpecialFood = 0 #in order to offer special food after every 3 normal food ones
 
 
 def personalize_game():
@@ -201,7 +203,7 @@ def set_speed(q):
                       to=150,
                       length=200,
                       troughcolor='black')
-        scale.set(50)
+        scale.set(70)
         scale.pack()
 
         slowImage = PhotoImage(file="slow.png")
@@ -262,13 +264,14 @@ def create_game():
 
     snake = Snake(canvas, general)
     food = Food(canvas, general)
+    special_food = SpecialFood(canvas, general)
 
-    next_turn(snake, food, canvas, label, window)
+    next_turn(snake, food, special_food, canvas, label, window)
 
     window.mainloop()
 
 
-def next_turn(snake, food, canvas, label, window):
+def next_turn(snake, food, special_food, canvas, label, window):
     x, y = snake.coordinates[0]
 
     global direction
@@ -295,15 +298,35 @@ def next_turn(snake, food, canvas, label, window):
 
     if x == food.coordinates[0] and y == food.coordinates[1]:
 
-        global score
+        global score, rareSpecialFood
 
         score += 1
+
+        canvas.delete("specialfood")
+
+        rareSpecialFood +=1
+
+        if rareSpecialFood == random.randint(1,2):
+            special_food = SpecialFood(canvas, general)
+            rareSpecialFood = 0
+        elif rareSpecialFood > 2:
+            rareSpecialFood=0
 
         label.config(text="Score:{}".format(score))
 
         canvas.delete("food")  #via tag
 
         food = Food(canvas, general)
+    elif x == special_food.coordinates[0] and y == special_food.coordinates[1]:
+
+        #global score, rareSpecialFood
+
+        score += 3
+
+        label.config(text="Score:{}".format(score))
+
+        canvas.delete("specialfood")
+
     else:
 
         del snake.coordinates[-1]
@@ -318,7 +341,7 @@ def next_turn(snake, food, canvas, label, window):
 
     else:
 
-        window.after(SPEED, next_turn, snake, food, canvas, label, window)
+        window.after(SPEED, next_turn, snake, food, special_food, canvas, label, window)
 
 
 def change_direction(new_direction):
