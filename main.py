@@ -103,6 +103,7 @@ def personalize_game():
 
     #number of players -------------------------------------------------------------------------------------------------
 
+    #not functional yet
     Label(window, text="Number of players", background="lightblue", font=('consolas', 30)).grid(row=8, column=0, columnspan=5)
     Radiobutton(window, text="single", variable=a, font=('consolas', 10), value=1, indicatoron=False,
                 command=lambda: set_players(a)).grid(row=9, column=1)
@@ -127,6 +128,7 @@ def done_with_settings(window):
     window.destroy()
     create_game()
 
+
 def set_players(a):
 
     global MULTIPLAYER
@@ -135,6 +137,7 @@ def set_players(a):
         MULTIPLAYER = 1
     elif a.get() == 2:
         MULTIPLAYER = 2
+
 
 def set_difficulty(b):
 
@@ -250,13 +253,13 @@ def set_speed(q):
         slowLabel = Label(fereastra, image=slowImage)
         slowLabel.pack()
 
-        button = Button(fereastra, text='submit', command=lambda: setSpeed(scale, fereastra))
+        button = Button(fereastra, text='submit', command=lambda: submit_speed(scale, fereastra))
         button.pack()
 
         fereastra.mainloop()
 
 
-def setSpeed(scale, fereastra):
+def submit_speed(scale, fereastra):
     global SPEED
     general.SPEED = scale.get()
     SPEED = general.SPEED
@@ -427,13 +430,6 @@ def check_collisions(snake, canvas):
         else:
             print("Game over!")
             return True
-
-    # if x < 0 or x >= GAME_WIDTH:
-    #     print("Game over!")
-    #     return True
-    # elif y < 0 or y >= GAME_HEIGHT:
-    #     print("Game over!")
-    #     return True
 
     # everything after the head of the snake
     for body_part in snake.coordinates[1:]:
