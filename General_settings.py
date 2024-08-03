@@ -18,12 +18,4 @@ class Generals:
         self.SNAKE_COLOR = "pink"
         self.FOOD_COLOR = "red"
         self.BACKGROUND_COLOR = "#000000"
-    def reset(self, width, height, speed, space_size, body_parts, snake_color, food_color, background_color):
-        self.GAME_WIDTH = width
-        self.GAME_HEIGHT = height
-        self.SPEED = speed
-        self.SPACE_SIZE = space_size
-        self.BODY_PARTS = body_parts
-        self.SNAKE_COLOR = snake_color
-        self.FOOD_COLOR = food_color
-        self.BACKGROUND_COLOR = background_color
+

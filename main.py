@@ -20,7 +20,7 @@ BACKGROUND_COLOR = general.BACKGROUND_COLOR
 score = 0
 direction = 'down'
 wasSettingsClicked = 0
-rareSpecialFood = 0 #in order to offer special food after every 3 normal food ones
+rareSpecialFood = 0 #in order to count special food, so that they appear randomly
 
 
 def personalize_game():
@@ -272,6 +272,8 @@ def create_game():
 
 
 def next_turn(snake, food, special_food, canvas, label, window):
+
+    #the head of the snake
     x, y = snake.coordinates[0]
 
     global direction
@@ -291,35 +293,41 @@ def next_turn(snake, food, special_food, canvas, label, window):
 
         x += SPACE_SIZE
 
+    #insert x,y at the head of the snake
     snake.coordinates.insert(0, (x, y))
 
     square = canvas.create_rectangle(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE_COLOR)
     snake.squares.insert(0, square)
 
-    if x == food.coordinates[0] and y == food.coordinates[1]:
+    global score, rareSpecialFood
 
-        global score, rareSpecialFood
+    #snake head and food are overlapping
+    if x == food.coordinates[0] and y == food.coordinates[1]:
 
         score += 1
 
+        #if the normal food is eaten before the special one,
+        #the special one expires
         canvas.delete("specialfood")
 
         rareSpecialFood +=1
 
+        #special food is created randomly
         if rareSpecialFood == random.randint(1,2):
             special_food = SpecialFood(canvas, general)
             rareSpecialFood = 0
         elif rareSpecialFood > 2:
             rareSpecialFood=0
 
+        #update the score label
         label.config(text="Score:{}".format(score))
 
         canvas.delete("food")  #via tag
 
+        #another food object is created
         food = Food(canvas, general)
-    elif x == special_food.coordinates[0] and y == special_food.coordinates[1]:
 
-        #global score, rareSpecialFood
+    elif x == special_food.coordinates[0] and y == special_food.coordinates[1]:
 
         score += 3
 
@@ -329,13 +337,16 @@ def next_turn(snake, food, special_food, canvas, label, window):
 
     else:
 
+        #deletes the coordinates of the last part of the snake, to create the moving action
         del snake.coordinates[-1]
 
+        #update the canvas
         canvas.delete(snake.squares[-1])
 
+        #deletes the last square of the snake
         del snake.squares[-1]
 
-    if check_colisions(snake):
+    if check_collisions(snake):
 
         game_over(canvas)
 
@@ -345,7 +356,8 @@ def next_turn(snake, food, special_food, canvas, label, window):
 
 
 def change_direction(new_direction):
-    global direction  #the old direction
+    # the old direction
+    global direction
 
     if new_direction == 'left':
         if direction != 'right':
@@ -360,8 +372,9 @@ def change_direction(new_direction):
         if direction != 'up':
             direction = new_direction
 
+def check_collisions(snake):
 
-def check_colisions(snake):
+    #head of the snake
     x, y = snake.coordinates[0]
 
     if x < 0 or x >= GAME_WIDTH:
@@ -371,7 +384,9 @@ def check_colisions(snake):
         print("Game over!")
         return True
 
-    for body_part in snake.coordinates[1:]:  #everything after the head of the snake
+    # everything after the head of the snake
+    for body_part in snake.coordinates[1:]:
+        #if the head of the snake touches another part of its body
         if x == body_part[0] and y == body_part[1]:
             print("Game over!")
             return True
@@ -380,8 +395,12 @@ def check_colisions(snake):
 
 def game_over(canvas):
     canvas.delete(ALL)
-    canvas.create_text((canvas.winfo_width() / 2), (canvas.winfo_height() / 2), font=('consolas', 70), text="GAME OVER",
-                       fill="blue", tag="game")
+    canvas.create_text((canvas.winfo_width() / 2),
+                       (canvas.winfo_height() / 2),
+                       font=('consolas', 70),
+                       text="GAME OVER",
+                       fill="blue",
+                       tag="game")
 
 
 root = Tk()
