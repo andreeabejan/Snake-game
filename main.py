@@ -346,7 +346,7 @@ def next_turn(snake, food, special_food, canvas, label, window):
         #deletes the last square of the snake
         del snake.squares[-1]
 
-    if check_collisions(snake):
+    if check_collisions(snake, canvas):
 
         game_over(canvas)
 
@@ -372,17 +372,21 @@ def change_direction(new_direction):
         if direction != 'up':
             direction = new_direction
 
-def check_collisions(snake):
+def check_collisions(snake, canvas):
 
     #head of the snake
     x, y = snake.coordinates[0]
 
-    if x < 0 or x >= GAME_WIDTH:
-        print("Game over!")
-        return True
-    elif y < 0 or y >= GAME_HEIGHT:
-        print("Game over!")
-        return True
+    if x < 0 or x >= GAME_WIDTH or y < 0 or y >= GAME_HEIGHT:
+        teleport(snake, canvas)
+        return False
+
+    # if x < 0 or x >= GAME_WIDTH:
+    #     print("Game over!")
+    #     return True
+    # elif y < 0 or y >= GAME_HEIGHT:
+    #     print("Game over!")
+    #     return True
 
     # everything after the head of the snake
     for body_part in snake.coordinates[1:]:
@@ -391,6 +395,29 @@ def check_collisions(snake):
             print("Game over!")
             return True
     return False
+def teleport(snake, canvas):
+    # head of the snake
+    x, y = snake.coordinates[0]
+
+    # Adjust x coordinate if out of bounds
+    if x < 0:
+        x = GAME_WIDTH - SPACE_SIZE
+    elif x >= GAME_WIDTH:
+        x = 0
+
+    # Adjust y coordinate if out of bounds
+    if y < 0:
+        y = GAME_HEIGHT - SPACE_SIZE
+    elif y >= GAME_HEIGHT:
+        y = 0
+
+    # Update the snake's head coordinates
+    snake.coordinates[0] = (x, y)
+
+    # Move the snake's head square to the new coordinates
+    canvas.coords(snake.squares[0], x, y, x + SPACE_SIZE, y + SPACE_SIZE)
+
+
 
 
 def game_over(canvas):
