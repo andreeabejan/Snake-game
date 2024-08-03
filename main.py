@@ -133,9 +133,10 @@ def done_with_settings(window):
     global SPACE_SIZE
 
     window.destroy()
-    if MULTIPLAYER ==1:
+    if MULTIPLAYER == 1:
         create_game()
     else:
+        #make space size smaller for two player game
         general.SPACE_SIZE = 15
         SPACE_SIZE = general.SPACE_SIZE
         multiplayer_game()
@@ -324,6 +325,7 @@ def multiplayer_game():
     food = Food(canvas, general)
     special_food = SpecialFood(canvas, general)
 
+    #loop for both snakes to work at the same time
     run_both_snakes(snake, second_snake, food, special_food, canvas, label, window)
 
     window.mainloop()
@@ -332,7 +334,8 @@ def multiplayer_game():
 def run_both_snakes(snake, second_snake, food, special_food, canvas, label, window):
     next_turn_first_player(snake, food, special_food, canvas, label, window)
     next_turn_player_2(second_snake, food, special_food, canvas, label, window)
-    window.after(SPEED, run_both_snakes, snake, food, special_food, canvas, label, window)
+    window.after(50, run_both_snakes, snake, food, special_food, canvas, label, window)
+    #50 milliseconds, in order to control CPU usage
 
 
 def create_game():
@@ -551,21 +554,28 @@ def next_turn_first_player(snake, food, special_food, canvas, label, window):
         if score > score_player_2:
             canvas.create_text((canvas.winfo_width() / 2),
                                (canvas.winfo_height() / 2),
-                               font=('consolas', 70),
+                               font=('consolas', 50),
                                text="First player wins!",
-                               fill="blue",
+                               fill="yellow",
+                               tag="game")
+        elif score == score_player_2:
+            canvas.create_text((canvas.winfo_width() / 2),
+                               (canvas.winfo_height() / 2),
+                               font=('consolas', 50),
+                               text="Tie!",
+                               fill="yellow",
                                tag="game")
         else:
             canvas.create_text((canvas.winfo_width() / 2),
                                (canvas.winfo_height() / 2),
-                               font=('consolas', 70),
+                               font=('consolas', 50),
                                text="Second player wins!",
-                               fill="blue",
+                               fill="yellow",
                                tag="game")
 
     else:
 
-        window.after(SPEED, next_turn_first_player, snake, food, special_food, canvas, label, window)
+        window.after(50, next_turn_first_player, snake, food, special_food, canvas, label, window)
 
 
 def next_turn_player_2(second_snake, food, special_food, canvas, label, window):
@@ -651,22 +661,29 @@ def next_turn_player_2(second_snake, food, special_food, canvas, label, window):
         if score < score_player_2:
             canvas.create_text((canvas.winfo_width() / 2),
                                (canvas.winfo_height() / 2),
-                               font=('consolas', 70),
+                               font=('consolas', 50),
                                text="Second player wins!",
-                               fill="blue",
+                               fill="yellow",
+                               tag="game")
+        elif score == score_player_2:
+            canvas.create_text((canvas.winfo_width() / 2),
+                               (canvas.winfo_height() / 2),
+                               font=('consolas', 50),
+                               text="Tie!",
+                               fill="yellow",
                                tag="game")
         else:
             canvas.create_text((canvas.winfo_width() / 2),
                                (canvas.winfo_height() / 2),
-                               font=('consolas', 70),
+                               font=('consolas', 50),
                                text="First player wins!",
-                               fill="blue",
+                               fill="yellow",
                                tag="game")
 
 
     else:
 
-        window.after(SPEED, next_turn_player_2, second_snake, food, special_food, canvas, label, window)
+        window.after(50, next_turn_player_2, second_snake, food, special_food, canvas, label, window)
 
 
 def change_direction(new_direction):
