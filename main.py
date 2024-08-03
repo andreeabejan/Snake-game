@@ -20,7 +20,9 @@ BACKGROUND_COLOR = general.BACKGROUND_COLOR
 score = 0
 direction = 'down'
 wasSettingsClicked = 0
-rareSpecialFood = 0 #in order to count special food, so that they appear randomly
+rareSpecialFood = 0  #in order to count special food, so that they appear randomly
+MULTIPLAYER = 1
+DIFFICULTY = "easy"
 
 
 def personalize_game():
@@ -32,17 +34,19 @@ def personalize_game():
 
     window.title("Snake game settings")
     window.resizable(False, False)
-
-    window.geometry("600x400")
+    window.config(bg="lightblue")
+    window.geometry("500x550")
 
     x = IntVar()
     y = IntVar()
     z = IntVar()
     q = IntVar()
+    a = IntVar()
+    b = IntVar()
 
     #options for Background color -----------------------------------------------------------------------
 
-    Label(window, text="Background color", font=('consolas', 30)).grid(row=0, column=0, columnspan=5)
+    Label(window, text="Background color", background="lightblue", font=('consolas', 30)).grid(row=0, column=0, columnspan=5)
     Radiobutton(window, text="black", variable=x, font=('consolas', 10), value=1, indicatoron=False,
                 command=lambda: set_background(x)).grid(row=1, column=0)
     Radiobutton(window, text="red", variable=x, font=('consolas', 10), value=2, indicatoron=False,
@@ -51,12 +55,12 @@ def personalize_game():
                 command=lambda: set_background(x)).grid(row=1, column=3)
     Radiobutton(window, text="pink", variable=x, font=('consolas', 10), value=13, indicatoron=False,
                 command=lambda: set_background(x)).grid(row=1, column=4)
-    Radiobutton(window, text="custom", variable=x, font=('consolas',10), value=16, indicatoron=False,
+    Radiobutton(window, text="custom", variable=x, font=('consolas', 10), value=16, indicatoron=False,
                 command=lambda: set_background(x)).grid(row=1, column=5)
 
     #options for Snake color -------------------------------------------------------------------------
 
-    Label(window, text="Snake color", font=('consolas', 30)).grid(row=2, column=0, columnspan=5)
+    Label(window, text="Snake color", background="lightblue", font=('consolas', 30)).grid(row=2, column=0, columnspan=5)
     Radiobutton(window, text="black", variable=y, indicatoron=False, value=4, font=('consolas', 10),
                 command=lambda: set_snake_color(y)).grid(row=3,
                                                          column=0)
@@ -71,40 +75,75 @@ def personalize_game():
 
     #options for Food color -------------------------------------------------------------------------
 
-    Label(window, text="Food color", font=('consolas', 30)).grid(row=4, column=0, columnspan=5)
+    Label(window, text="Food color", background="lightblue", font=('consolas', 30)).grid(row=4, column=0, columnspan=5)
     Radiobutton(window, text="black", variable=z, indicatoron=False, value=7, font=('consolas', 10),
                 command=lambda: set_food_color(z)).grid(row=5, column=0)
     Radiobutton(window, text="red", variable=z, indicatoron=False, value=8, font=('consolas', 10),
                 command=lambda: set_food_color(z)).grid(row=5, column=1)
     Radiobutton(window, text="blue", variable=z, indicatoron=False, value=9, font=('consolas', 10),
-                command=lambda: set_food_color(z)).grid(row=5,column=3)
+                command=lambda: set_food_color(z)).grid(row=5, column=3)
     Radiobutton(window, text="pink", variable=z, indicatoron=False, value=15, font=('consolas', 10),
                 command=lambda: set_food_color(z)).grid(row=5, column=4)
-    Radiobutton(window, text="custom", variable=z, indicatoron=False, value=18, font=('consolas',10),
+    Radiobutton(window, text="custom", variable=z, indicatoron=False, value=18, font=('consolas', 10),
                 command=lambda: set_food_color(z)).grid(row=5, column=5)
 
     #options for Speed -------------------------------------------------------------------------------
 
-    Label(window, text="Speed", font=('consolas', 30)).grid(row=6, column=0, columnspan=5)
+    Label(window, text="Speed", background="lightblue", font=('consolas', 30)).grid(row=6, column=0, columnspan=5)
     Radiobutton(window, text="slow", variable=q, indicatoron=False, value=10, font=('consolas', 10),
                 command=lambda: set_speed(q)).grid(row=7, column=0)
     Radiobutton(window, text="medium", variable=q, indicatoron=False, value=11, font=('consolas', 10),
-                command=lambda: set_speed(q)).grid(row=7,column=1)
+                command=lambda: set_speed(q)).grid(row=7, column=1)
     Radiobutton(window, text="fast", variable=q, indicatoron=False, value=12, font=('consolas', 10),
                 command=lambda: set_speed(q)).grid(row=7, column=3)
     Radiobutton(window, text="super fast", variable=q, indicatoron=False, value=16, font=('consolas', 10),
                 command=lambda: set_speed(q)).grid(row=7, column=4)
-    Radiobutton(window, text="custom", variable=q, indicatoron=False, value=19, font=('consolas',10),
+    Radiobutton(window, text="custom", variable=q, indicatoron=False, value=19, font=('consolas', 10),
                 command=lambda: set_speed(q)).grid(row=7, column=5)
+
+    #number of players -------------------------------------------------------------------------------------------------
+
+    Label(window, text="Number of players", background="lightblue", font=('consolas', 30)).grid(row=8, column=0, columnspan=5)
+    Radiobutton(window, text="single", variable=a, font=('consolas', 10), value=1, indicatoron=False,
+                command=lambda: set_players(a)).grid(row=9, column=1)
+    Radiobutton(window, text="two player", variable=a, font=('consolas', 10), value=2, indicatoron=False,
+                command=lambda: set_players(a)).grid(row=9, column=3)
+
+    #difficulty -------------------------------------------------------------------------------------------------
+
+    Label(window, text="Difficulty", background="lightblue", font=('consolas', 30)).grid(row=10, column=0, columnspan=5)
+    Radiobutton(window, text="easy", variable=b, font=('consolas', 10), value=1, indicatoron=False,
+                command=lambda: set_difficulty(b)).grid(row=11, column=1)
+    Radiobutton(window, text="hard", variable=b, font=('consolas', 10), value=2, indicatoron=False,
+                command=lambda: set_difficulty(b)).grid(row=11, column=3)
 
     button = Button(window, text="Start game", command=lambda: done_with_settings(window))
     button.place(relx=0.3, rely=0.9, anchor="n")
 
     window.mainloop()
 
+
 def done_with_settings(window):
     window.destroy()
     create_game()
+
+def set_players(a):
+
+    global MULTIPLAYER
+
+    if a.get() == 1:
+        MULTIPLAYER = 1
+    elif a.get() == 2:
+        MULTIPLAYER = 2
+
+def set_difficulty(b):
+
+    global DIFFICULTY
+
+    if b.get() == 1:
+        DIFFICULTY = "easy"
+    elif b.get() == 2:
+        DIFFICULTY = "hard"
 
 
 def set_background(x):
@@ -123,7 +162,7 @@ def set_background(x):
         BACKGROUND_COLOR = general.BACKGROUND_COLOR
     elif x.get() == 16:
         color = colorchooser.askcolor()
-        general.BACKGROUND_COLOR = color[1] #color in hexadecimal value
+        general.BACKGROUND_COLOR = color[1]  #color in hexadecimal value
         BACKGROUND_COLOR = general.BACKGROUND_COLOR
 
 
@@ -143,44 +182,45 @@ def set_snake_color(y):
         SNAKE_COLOR = general.SNAKE_COLOR
     elif y.get() == 17:
         color = colorchooser.askcolor()
-        general.SNAKE_COLOR = color[1] #Hex value of the color
+        general.SNAKE_COLOR = color[1]  #Hex value of the color
         SNAKE_COLOR = general.SNAKE_COLOR
 
 
 def set_food_color(z):
     global FOOD_COLOR
-    if z.get()==7:
+    if z.get() == 7:
         general.FOOD_COLOR = "#000000"
         FOOD_COLOR = general.FOOD_COLOR
-    elif z.get()==8:
+    elif z.get() == 8:
         general.FOOD_COLOR = "red"
         FOOD_COLOR = general.FOOD_COLOR
-    elif z.get()==9:
+    elif z.get() == 9:
         general.FOOD_COLOR = "blue"
         FOOD_COLOR = general.FOOD_COLOR
-    elif z.get()==15:
+    elif z.get() == 15:
         general.FOOD_COLOR = "pink"
         FOOD_COLOR = general.FOOD_COLOR
-    elif z.get()==18:
+    elif z.get() == 18:
         color = colorchooser.askcolor()
-        general.FOOD_COLOR = color[1] #Hex value of returned color
+        general.FOOD_COLOR = color[1]  #Hex value of returned color
         FOOD_COLOR = general.FOOD_COLOR
+
 
 def set_speed(q):
     global SPEED
-    if q.get()==10:
+    if q.get() == 10:
         general.SPEED = 150
         SPEED = general.SPEED
-    elif q.get()==11:
+    elif q.get() == 11:
         general.SPEED = 100
         SPEED = general.SPEED
-    elif q.get()==12:
+    elif q.get() == 12:
         general.SPEED = 50
         SPEED = general.SPEED
-    elif q.get()==16:
+    elif q.get() == 16:
         general.SPEED = 35
         SPEED = general.SPEED
-    elif q.get() ==19:
+    elif q.get() == 19:
         fereastra = Toplevel()
 
         window_width = 120
@@ -207,19 +247,21 @@ def set_speed(q):
         scale.pack()
 
         slowImage = PhotoImage(file="slow.png")
-        slowLabel = Label(fereastra,image=slowImage)
+        slowLabel = Label(fereastra, image=slowImage)
         slowLabel.pack()
 
-        button = Button(fereastra, text='submit',command=lambda: setSpeed(scale,fereastra))
+        button = Button(fereastra, text='submit', command=lambda: setSpeed(scale, fereastra))
         button.pack()
 
         fereastra.mainloop()
 
-def setSpeed(scale,fereastra):
+
+def setSpeed(scale, fereastra):
     global SPEED
     general.SPEED = scale.get()
     SPEED = general.SPEED
     fereastra.destroy()
+
 
 def create_game():
     global wasSettingsClicked
@@ -272,7 +314,6 @@ def create_game():
 
 
 def next_turn(snake, food, special_food, canvas, label, window):
-
     #the head of the snake
     x, y = snake.coordinates[0]
 
@@ -310,14 +351,14 @@ def next_turn(snake, food, special_food, canvas, label, window):
         #the special one expires
         canvas.delete("specialfood")
 
-        rareSpecialFood +=1
+        rareSpecialFood += 1
 
         #special food is created randomly
-        if rareSpecialFood == random.randint(1,2):
+        if rareSpecialFood == random.randint(1, 2):
             special_food = SpecialFood(canvas, general)
             rareSpecialFood = 0
         elif rareSpecialFood > 2:
-            rareSpecialFood=0
+            rareSpecialFood = 0
 
         #update the score label
         label.config(text="Score:{}".format(score))
@@ -372,14 +413,20 @@ def change_direction(new_direction):
         if direction != 'up':
             direction = new_direction
 
-def check_collisions(snake, canvas):
 
+def check_collisions(snake, canvas):
     #head of the snake
     x, y = snake.coordinates[0]
 
-    if x < 0 or x >= GAME_WIDTH or y < 0 or y >= GAME_HEIGHT:
-        teleport(snake, canvas)
-        return False
+    global DIFFICULTY
+
+    if (x < 0 or x >= GAME_WIDTH) or (y < 0 or y >= GAME_HEIGHT):
+        if DIFFICULTY == "easy":
+            teleport(snake, canvas)
+            return False
+        else:
+            print("Game over!")
+            return True
 
     # if x < 0 or x >= GAME_WIDTH:
     #     print("Game over!")
@@ -395,6 +442,8 @@ def check_collisions(snake, canvas):
             print("Game over!")
             return True
     return False
+
+
 def teleport(snake, canvas):
     # head of the snake
     x, y = snake.coordinates[0]
@@ -416,8 +465,6 @@ def teleport(snake, canvas):
 
     # Move the snake's head square to the new coordinates
     canvas.coords(snake.squares[0], x, y, x + SPACE_SIZE, y + SPACE_SIZE)
-
-
 
 
 def game_over(canvas):

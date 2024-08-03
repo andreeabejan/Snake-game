@@ -6,8 +6,8 @@ class Food:
     def __init__(self, canvas, general):
 
         #food object is placed randomnly
-        x = random.randint(0, int(general.GAME_WIDTH / general.SPACE_SIZE) - 1) * general.SPACE_SIZE
-        y = random.randint(0, int(general.GAME_HEIGHT / general.SPACE_SIZE) - 1) * general.SPACE_SIZE
+        x = random.randint(2, int(general.GAME_WIDTH / general.SPACE_SIZE) - 2) * general.SPACE_SIZE
+        y = random.randint(2, int(general.GAME_HEIGHT / general.SPACE_SIZE) - 2) * general.SPACE_SIZE
 
         self.coordinates = [x,y]
 
