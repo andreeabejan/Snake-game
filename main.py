@@ -2,6 +2,7 @@ from tkinter import *
 import random
 from tkinter import colorchooser
 from Snake import *
+from SecondSnake import *
 from Food import *
 from SpecialFood import *
 from General_settings import *
@@ -18,7 +19,9 @@ FOOD_COLOR = general.FOOD_COLOR
 BACKGROUND_COLOR = general.BACKGROUND_COLOR
 
 score = 0
+score_player_2 = 0
 direction = 'down'
+direction_player_2 = 'right'
 wasSettingsClicked = 0
 rareSpecialFood = 0  #in order to count special food, so that they appear randomly
 MULTIPLAYER = 1
@@ -125,8 +128,17 @@ def personalize_game():
 
 
 def done_with_settings(window):
+
+    global MULTIPLAYER
+    global SPACE_SIZE
+
     window.destroy()
-    create_game()
+    if MULTIPLAYER ==1:
+        create_game()
+    else:
+        general.SPACE_SIZE = 15
+        SPACE_SIZE = general.SPACE_SIZE
+        multiplayer_game()
 
 
 def set_players(a):
@@ -266,6 +278,63 @@ def submit_speed(scale, fereastra):
     fereastra.destroy()
 
 
+def multiplayer_game():
+    window = Tk()
+
+    window.title("Snake game")
+    window.resizable(False, False)
+
+    label = Label(window, text="   player1:{}  ||     player2:{}".format(score, score_player_2), font=('consolas', 40))
+    label.pack()
+
+    canvas = Canvas(window, bg=BACKGROUND_COLOR, height=GAME_HEIGHT, width=GAME_WIDTH)
+    canvas.pack()
+
+    window.update()
+
+    # Here, I try to place the game window as much in the center of the screen as possible
+    window_width = window.winfo_width()
+    window_height = window.winfo_height()
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+
+    x = int((screen_width / 2) - (window_width / 2))
+    y = int((screen_height / 2) - (window_height / 2))
+
+    window.geometry(f"{window_width}x{window_height}+{x}+{y}")
+
+    # essential line for keyboard events to work,
+    # because initially focus is not on this window
+    window.focus_force()
+
+    # Here I set the keyboard events for changing the first snake's directions
+    window.bind('<Left>', lambda event: change_direction('left'))
+    window.bind('<Right>', lambda event: change_direction('right'))
+    window.bind('<Down>', lambda event: change_direction('down'))
+    window.bind('<Up>', lambda event: change_direction('up'))
+
+    # Here I set the keyboard events for changing the second snake's directions
+    window.bind('a', lambda event: change_second_direction('left'))
+    window.bind('d', lambda event: change_second_direction('right'))
+    window.bind('s', lambda event: change_second_direction('down'))
+    window.bind('w', lambda event: change_second_direction('up'))
+
+    snake = Snake(canvas, general)
+    second_snake = SecondSnake(canvas, general)
+    food = Food(canvas, general)
+    special_food = SpecialFood(canvas, general)
+
+    run_both_snakes(snake, second_snake, food, special_food, canvas, label, window)
+
+    window.mainloop()
+
+
+def run_both_snakes(snake, second_snake, food, special_food, canvas, label, window):
+    next_turn_first_player(snake, food, special_food, canvas, label, window)
+    next_turn_player_2(second_snake, food, special_food, canvas, label, window)
+    window.after(SPEED, run_both_snakes, snake, food, special_food, canvas, label, window)
+
+
 def create_game():
     global wasSettingsClicked
     if wasSettingsClicked == 0:
@@ -399,6 +468,207 @@ def next_turn(snake, food, special_food, canvas, label, window):
         window.after(SPEED, next_turn, snake, food, special_food, canvas, label, window)
 
 
+def next_turn_first_player(snake, food, special_food, canvas, label, window):
+    # the head of the snake
+    x, y = snake.coordinates[0]
+
+    global direction
+
+    if direction == "up":
+        y -= SPACE_SIZE
+
+    elif direction == "down":
+
+        y += SPACE_SIZE
+
+    elif direction == "left":
+
+        x -= SPACE_SIZE
+
+    elif direction == "right":
+
+        x += SPACE_SIZE
+
+    # insert x,y at the head of the snake
+    snake.coordinates.insert(0, (x, y))
+
+    square = canvas.create_rectangle(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE_COLOR)
+    snake.squares.insert(0, square)
+
+    global score, score_player_2, rareSpecialFood
+
+    # snake head and food are overlapping
+    if x == food.coordinates[0] and y == food.coordinates[1]:
+
+        score += 1
+
+        # if the normal food is eaten before the special one,
+        # the special one expires
+        canvas.delete("specialfood")
+
+        rareSpecialFood += 1
+
+        # special food is created randomly
+        if rareSpecialFood == random.randint(1, 2):
+            special_food = SpecialFood(canvas, general)
+            rareSpecialFood = 0
+        elif rareSpecialFood > 2:
+            rareSpecialFood = 0
+
+        # update the score label
+        label.config(text="   player1:{}  ||     player2:{}".format(score, score_player_2))
+
+        canvas.delete("food")  # via tag
+
+        # another food object is created
+        food = Food(canvas, general)
+
+    elif x == special_food.coordinates[0] and y == special_food.coordinates[1]:
+
+        score += 3
+
+        label.config(text="   player1:{}  ||     player2:{}".format(score, score_player_2))
+
+        canvas.delete("specialfood")
+
+    else:
+
+        # deletes the coordinates of the last part of the snake, to create the moving action
+        del snake.coordinates[-1]
+
+        # update the canvas
+        canvas.delete(snake.squares[-1])
+
+        # deletes the last square of the snake
+        del snake.squares[-1]
+
+    if check_collisions(snake, canvas):
+
+        canvas.delete(ALL)
+
+        score -= 5
+        label.config(text="   player1:{}  ||     player2:{}".format(score, score_player_2))
+        if score > score_player_2:
+            canvas.create_text((canvas.winfo_width() / 2),
+                               (canvas.winfo_height() / 2),
+                               font=('consolas', 70),
+                               text="First player wins!",
+                               fill="blue",
+                               tag="game")
+        else:
+            canvas.create_text((canvas.winfo_width() / 2),
+                               (canvas.winfo_height() / 2),
+                               font=('consolas', 70),
+                               text="Second player wins!",
+                               fill="blue",
+                               tag="game")
+
+    else:
+
+        window.after(SPEED, next_turn_first_player, snake, food, special_food, canvas, label, window)
+
+
+def next_turn_player_2(second_snake, food, special_food, canvas, label, window):
+    # the head of the snake
+    x, y = second_snake.coordinates[0]
+
+    global direction_player_2
+
+    if direction_player_2 == "up":
+        y -= SPACE_SIZE
+
+    elif direction_player_2 == "down":
+
+        y += SPACE_SIZE
+
+    elif direction_player_2 == "left":
+
+        x -= SPACE_SIZE
+
+    elif direction_player_2 == "right":
+
+        x += SPACE_SIZE
+
+    # insert x,y at the head of the snake
+    second_snake.coordinates.insert(0, (x, y))
+
+    square = canvas.create_rectangle(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill="pink")
+    second_snake.squares.insert(0, square)
+
+    global score, score_player_2, rareSpecialFood
+
+    # snake head and food are overlapping
+    if x == food.coordinates[0] and y == food.coordinates[1]:
+
+        score_player_2 += 1
+
+        # if the normal food is eaten before the special one,
+        # the special one expires
+        canvas.delete("specialfood")
+
+        rareSpecialFood += 1
+
+        # special food is created randomly
+        if rareSpecialFood == random.randint(1, 2):
+            special_food = SpecialFood(canvas, general)
+            rareSpecialFood = 0
+        elif rareSpecialFood > 2:
+            rareSpecialFood = 0
+
+        # update the score label
+        label.config(text="   player1:{}  ||     player2:{}".format(score, score_player_2))
+
+        canvas.delete("food")  # via tag
+
+        # another food object is created
+        food = Food(canvas, general)
+
+    elif x == special_food.coordinates[0] and y == special_food.coordinates[1]:
+
+        score_player_2 += 3
+
+        label.config(text="   player1:{}  ||     player2:{}".format(score, score_player_2))
+
+        canvas.delete("specialfood")
+
+    else:
+
+        # deletes the coordinates of the last part of the snake, to create the moving action
+        del second_snake.coordinates[-1]
+
+        # update the canvas
+        canvas.delete(second_snake.squares[-1])
+
+        # deletes the last square of the snake
+        del second_snake.squares[-1]
+
+    if check_collisions(second_snake, canvas):
+
+        canvas.delete(ALL)
+
+        score_player_2 -= 5
+        label.config(text="   player1:{}  ||     player2:{}".format(score, score_player_2))
+        if score < score_player_2:
+            canvas.create_text((canvas.winfo_width() / 2),
+                               (canvas.winfo_height() / 2),
+                               font=('consolas', 70),
+                               text="Second player wins!",
+                               fill="blue",
+                               tag="game")
+        else:
+            canvas.create_text((canvas.winfo_width() / 2),
+                               (canvas.winfo_height() / 2),
+                               font=('consolas', 70),
+                               text="First player wins!",
+                               fill="blue",
+                               tag="game")
+
+
+    else:
+
+        window.after(SPEED, next_turn_player_2, second_snake, food, special_food, canvas, label, window)
+
+
 def change_direction(new_direction):
     # the old direction
     global direction
@@ -415,6 +685,24 @@ def change_direction(new_direction):
     elif new_direction == 'down':
         if direction != 'up':
             direction = new_direction
+
+
+def change_second_direction(new_direction):
+    # the old direction
+    global direction_player_2
+
+    if new_direction == 'left':
+        if direction_player_2 != 'right':
+            direction_player_2 = new_direction
+    elif new_direction == 'right':
+        if direction_player_2 != 'left':
+            direction_player_2 = new_direction
+    elif new_direction == 'up':
+        if direction_player_2 != 'down':
+            direction_player_2 = new_direction
+    elif new_direction == 'down':
+        if direction_player_2 != 'up':
+            direction_player_2 = new_direction
 
 
 def check_collisions(snake, canvas):
