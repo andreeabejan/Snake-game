@@ -26,6 +26,8 @@ wasSettingsClicked = 0
 rareSpecialFood = 0  #in order to count special food, so that they appear randomly
 MULTIPLAYER = 1
 DIFFICULTY = "easy"
+food = None
+special_food = None
 
 
 def personalize_game():
@@ -107,11 +109,11 @@ def personalize_game():
     #number of players -------------------------------------------------------------------------------------------------
 
     #not functional yet
-    Label(window, text="Number of players", background="lightblue", font=('consolas', 30)).grid(row=8, column=0, columnspan=5)
-    Radiobutton(window, text="single", variable=a, font=('consolas', 10), value=1, indicatoron=False,
-                command=lambda: set_players(a)).grid(row=9, column=1)
-    Radiobutton(window, text="two player", variable=a, font=('consolas', 10), value=2, indicatoron=False,
-                command=lambda: set_players(a)).grid(row=9, column=3)
+    # Label(window, text="Number of players", background="lightblue", font=('consolas', 30)).grid(row=8, column=0, columnspan=5)
+    # Radiobutton(window, text="single", variable=a, font=('consolas', 10), value=1, indicatoron=False,
+    #             command=lambda: set_players(a)).grid(row=9, column=1)
+    # Radiobutton(window, text="two player", variable=a, font=('consolas', 10), value=2, indicatoron=False,
+    #             command=lambda: set_players(a)).grid(row=9, column=3)
 
     #difficulty -------------------------------------------------------------------------------------------------
 
@@ -320,22 +322,26 @@ def multiplayer_game():
     window.bind('s', lambda event: change_second_direction('down'))
     window.bind('w', lambda event: change_second_direction('up'))
 
+    global food, special_food
+
     snake = Snake(canvas, general)
     second_snake = SecondSnake(canvas, general)
     food = Food(canvas, general)
     special_food = SpecialFood(canvas, general)
 
     #loop for both snakes to work at the same time
-    run_both_snakes(snake, second_snake, food, special_food, canvas, label, window)
+    run_both_snakes(snake, second_snake, canvas, label, window)
 
     window.mainloop()
 
 
-def run_both_snakes(snake, second_snake, food, special_food, canvas, label, window):
-    next_turn_first_player(snake, food, special_food, canvas, label, window)
-    next_turn_player_2(second_snake, food, special_food, canvas, label, window)
-    window.after(50, run_both_snakes, snake, food, special_food, canvas, label, window)
-    #50 milliseconds, in order to control CPU usage
+def run_both_snakes(snake, second_snake, canvas, label, window):
+
+    global food, special_food
+
+    next_turn_first_player(snake, canvas, label, window)
+    next_turn_player_2(second_snake, canvas, label, window)
+    window.after(1000, run_both_snakes, snake, second_snake, canvas, label, window)
 
 
 def create_game():
@@ -379,20 +385,31 @@ def create_game():
     window.bind('<Down>', lambda event: change_direction('down'))
     window.bind('<Up>', lambda event: change_direction('up'))
 
+    global food, special_food
+
     snake = Snake(canvas, general)
     food = Food(canvas, general)
     special_food = SpecialFood(canvas, general)
 
-    next_turn(snake, food, special_food, canvas, label, window)
+    next_turn(snake, canvas, label, window)
 
     window.mainloop()
 
 
-def next_turn(snake, food, special_food, canvas, label, window):
+def special_effect(snake, canvas):
+    colors = ["red", "blue", "green", "yellow", "purple"]
+    for i in range(len(snake.squares)):
+        color = random.choice(colors)
+        canvas.itemconfig(snake.squares[i], fill=color)
+    #timer to reset the snake color after 4 seconds
+    canvas.after(4000, snake.reset_color, canvas, general)
+
+
+def next_turn(snake, canvas, label, window):
     #the head of the snake
     x, y = snake.coordinates[0]
 
-    global direction
+    global direction, food, special_food
 
     if direction == "up":
         y -= SPACE_SIZE
@@ -447,6 +464,8 @@ def next_turn(snake, food, special_food, canvas, label, window):
 
         score += 3
 
+        special_effect(snake,canvas)
+
         label.config(text="Score:{}".format(score))
 
         canvas.delete("specialfood")
@@ -468,14 +487,15 @@ def next_turn(snake, food, special_food, canvas, label, window):
 
     else:
 
-        window.after(SPEED, next_turn, snake, food, special_food, canvas, label, window)
+        window.after(50, next_turn, snake, canvas, label, window)
 
 
-def next_turn_first_player(snake, food, special_food, canvas, label, window):
+def next_turn_first_player(snake, canvas, label, window):
+
     # the head of the snake
     x, y = snake.coordinates[0]
 
-    global direction
+    global direction, food, special_food
 
     if direction == "up":
         y -= SPACE_SIZE
@@ -575,14 +595,14 @@ def next_turn_first_player(snake, food, special_food, canvas, label, window):
 
     else:
 
-        window.after(50, next_turn_first_player, snake, food, special_food, canvas, label, window)
+        window.after(300, next_turn_first_player, snake, canvas, label, window)
 
 
-def next_turn_player_2(second_snake, food, special_food, canvas, label, window):
+def next_turn_player_2(second_snake, canvas, label, window):
     # the head of the snake
     x, y = second_snake.coordinates[0]
 
-    global direction_player_2
+    global direction_player_2, food, special_food
 
     if direction_player_2 == "up":
         y -= SPACE_SIZE
@@ -683,7 +703,7 @@ def next_turn_player_2(second_snake, food, special_food, canvas, label, window):
 
     else:
 
-        window.after(50, next_turn_player_2, second_snake, food, special_food, canvas, label, window)
+        window.after(300, next_turn_player_2, second_snake, canvas, label, window)
 
 
 def change_direction(new_direction):

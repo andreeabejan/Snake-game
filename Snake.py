@@ -23,3 +23,11 @@ class Snake:
                                              tag="snake")
             self.squares.append(square)
 
+    def change_color(self, canvas, color):
+        for square in self.squares:
+            canvas.itemconfig(square, fill=color)
+
+    def reset_color(self, canvas, general):
+        for square in self.squares:
+            canvas.itemconfig(square, fill= general.SNAKE_COLOR)
+
